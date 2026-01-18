@@ -1,0 +1,111 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ballast_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-ballast_development}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ballast_network
+
+  backend:
+    build:
+      context: ./backend-ballast-lane
+      dockerfile: Dockerfile.dev
+    container_name: ballast_backend
+    environment:
+      RAILS_ENV: ${RAILS_ENV:-development}
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-ballast_development}
+      DEVISE_JWT_SECRET_KEY: ${DEVISE_JWT_SECRET_KEY:-your-secret-key-here}
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY:-}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3001}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-ballast_development}
+    volumes:
+      - ./backend-ballast-lane:/app
+      - backend_bundle:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - ballast_network
+    stdin_open: true
+    tty: true
+    develop:
+      watch:
+        - action: sync
+          path: ./backend-ballast-lane/app
+          target: /app/app
+        - action: sync
+          path: ./backend-ballast-lane/config
+          target: /app/config
+        - action: sync
+          path: ./backend-ballast-lane/lib
+          target: /app/lib
+        - action: rebuild
+          path: ./backend-ballast-lane/Gemfile.lock
+
+  frontend:
+    build:
+      context: ./frontend-ballast-lane
+      dockerfile: Dockerfile.dev
+    container_name: ballast_frontend
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
+      NODE_ENV: development
+    volumes:
+      - ./frontend-ballast-lane:/app
+      - frontend_node_modules:/app/node_modules
+    ports:
+      - "3001:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - ballast_network
+    stdin_open: true
+    tty: true
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend-ballast-lane/src
+          target: /app/src
+        - action: sync
+          path: ./frontend-ballast-lane/public
+          target: /app/public
+        - action: rebuild
+          path: ./frontend-ballast-lane/package-lock.json
+
+volumes:
+  postgres_data:
+  backend_bundle:
+  frontend_node_modules:
+
+networks:
+  ballast_network:
+    driver: bridge
