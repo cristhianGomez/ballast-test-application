@@ -1,3 +1,8 @@
+export interface PokemonListItem {
+  number: number;
+  name: string;
+  image: string;
+}
 export interface Pokemon {
   id: number;
   name: string;
@@ -26,7 +31,7 @@ export interface PokemonStat {
 
 export interface PokemonListResponse {
   success: boolean;
-  data: Pokemon[];
+  data: PokemonListItem[];
   meta: {
     count: number;
     limit: number;

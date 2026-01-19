@@ -14,9 +14,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { authApi, ApiError } from "@/lib/api";
+import { apiSignUp, ApiError } from "@/lib/api";
 import { registerSchema, type RegisterFormData } from "@/lib/validations/auth";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/providers/auth-provider";
 
 export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -38,9 +38,13 @@ export function RegisterForm() {
     setError(null);
 
     try {
-      const response = await authApi.signUp(data.email, data.password, data.passwordConfirmation);
-      login(response.data, "mock-token"); // In real app, extract token from Authorization header
-      router.push("/dashboard");
+      const { data: userData, token } = await apiSignUp(
+        data.email,
+        data.password,
+        data.passwordConfirmation
+      );
+      login(userData, token);
+      router.push("/pokemon");
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);

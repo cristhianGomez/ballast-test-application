@@ -1,3 +1,5 @@
+import { getStoredToken, clearStoredAuth } from "@/providers/auth-provider";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 type RequestOptions = {
@@ -5,6 +7,7 @@ type RequestOptions = {
   body?: unknown;
   headers?: Record<string, string>;
   token?: string;
+  skipAuth?: boolean;
 };
 
 export class ApiError extends Error {
@@ -19,7 +22,7 @@ export class ApiError extends Error {
 }
 
 export async function api<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-  const { method = "GET", body, headers = {}, token } = options;
+  const { method = "GET", body, headers = {}, token, skipAuth = false } = options;
 
   const requestHeaders: Record<string, string> = {
     "Content-Type": "application/json",
@@ -27,8 +30,9 @@ export async function api<T>(endpoint: string, options: RequestOptions = {}): Pr
     ...headers,
   };
 
-  if (token) {
-    requestHeaders["Authorization"] = `Bearer ${token}`;
+  const authToken = token || (!skipAuth ? getStoredToken() : null);
+  if (authToken) {
+    requestHeaders["Authorization"] = `Bearer ${authToken}`;
   }
 
   const response = await fetch(`${API_URL}${endpoint}`, {
@@ -38,6 +42,15 @@ export async function api<T>(endpoint: string, options: RequestOptions = {}): Pr
     credentials: "include",
   });
 
+  // Handle 401 globally
+  if (response.status === 401 && !skipAuth) {
+    clearStoredAuth();
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
+    throw new ApiError("Unauthorized", 401);
+  }
+
   const data = await response.json();
 
   if (!response.ok) {
@@ -45,6 +58,61 @@ export async function api<T>(endpoint: string, options: RequestOptions = {}): Pr
   }
 
   return data;
+}
+
+export async function apiLogin(
+  email: string,
+  password: string
+): Promise<{ data: AuthResponse["data"]; token: string }> {
+  const response = await fetch(`${API_URL}/api/v1/auth/sign_in`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({ user: { email, password } }),
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new ApiError(data.message || "Login failed", response.status, data);
+  }
+
+  const authHeader = response.headers.get("Authorization");
+  const token = authHeader?.replace("Bearer ", "") || "";
+
+  return { data: data.data, token };
+}
+
+export async function apiSignUp(
+  email: string,
+  password: string,
+  passwordConfirmation: string
+): Promise<{ data: AuthResponse["data"]; token: string }> {
+  const response = await fetch(`${API_URL}/api/v1/auth/sign_up`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      user: { email, password, password_confirmation: passwordConfirmation },
+    }),
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new ApiError(data.message || "Registration failed", response.status, data);
+  }
+
+  const authHeader = response.headers.get("Authorization");
+  const token = authHeader?.replace("Bearer ", "") || "";
+
+  return { data: data.data, token };
 }
 
 // Auth API
@@ -69,11 +137,27 @@ export const authApi = {
 };
 
 // Pokemon API
-export const pokemonApi = {
-  list: (limit = 20, offset = 0) =>
-    api<PokemonListResponse>(`/api/v1/pokemon?limit=${limit}&offset=${offset}`),
+export interface PokemonListParams {
+  search?: string;
+  sort?: string;
+  order?: "asc" | "desc";
+  limit?: number;
+  offset?: number;
+}
 
-  get: (id: string | number) => api<PokemonDetailResponse>(`/api/v1/pokemon/${id}`),
+export const pokemonApi = {
+  list: (params: PokemonListParams = {}) => {
+    const { search, sort, order, limit = 20, offset = 0 } = params;
+    const queryParams = new URLSearchParams();
+    queryParams.set("limit", String(limit));
+    queryParams.set("offset", String(offset));
+    if (search) queryParams.set("search", search);
+    if (sort) queryParams.set("sort", sort);
+    if (order) queryParams.set("order", order);
+    return api<PokemonListResponse>(`/api/v1/pokemon?${queryParams.toString()}`);
+  },
+
+  get: (nameOrId: string | number) => api<PokemonDetailResponse>(`/api/v1/pokemon/${nameOrId}`),
 };
 
 // Types
@@ -87,9 +171,15 @@ export interface AuthResponse {
   };
 }
 
+export interface PokemonListItem {
+  number: number;
+  name: string;
+  image: string;
+}
+
 export interface PokemonListResponse {
   success: boolean;
-  data: Pokemon[];
+  data: PokemonListItem[];
   meta: {
     count: number;
     limit: number;

@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
+import { QueryProvider } from "@/providers/query-provider";
+import { AuthProvider } from "@/providers/auth-provider";
+import { Navigation } from "@/components/navigation";
 
-const inter = Inter({ subsets: ["latin"] });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+});
 
 export const metadata: Metadata = {
   title: "Ballast Lane",
@@ -15,29 +22,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" >
-      <body className={inter.className}>
-        <div className="min-h-screen bg-background">
-          <nav className="border-b">
-            <div className="container mx-auto flex h-16 items-center justify-between px-4">
-              <a href="/" className="text-xl font-bold">
-                Ballast Lane
-              </a>
-              <div className="flex items-center gap-4">
-                <a href="/pokemon" className="text-sm hover:underline">
-                  Pokemon
-                </a>
-                <a href="/login" className="text-sm hover:underline">
-                  Login
-                </a>
-                <a href="/register" className="text-sm hover:underline">
-                  Register
-                </a>
-              </div>
+    <html lang="en">
+      <body className={`${poppins.variable} ${poppins.className}`}>
+        <QueryProvider>
+          <AuthProvider>
+            <div className="min-h-screen bg-background">
+              <Navigation />
+              <main>{children}</main>
             </div>
-          </nav>
-          <main>{children}</main>
-        </div>
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );
