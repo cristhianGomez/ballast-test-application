@@ -26,9 +26,9 @@ export default function RootLayout({
       <body className={`${poppins.variable} ${poppins.className}`}>
         <QueryProvider>
           <AuthProvider>
-            <div className="min-h-screen bg-background">
+            <div className="flex flex-col min-h-screen bg-background">
               <Navigation />
-              <main>{children}</main>
+              <main className="flex flex-1 bg-primary">{children}</main>
             </div>
           </AuthProvider>
         </QueryProvider>

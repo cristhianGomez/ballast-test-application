@@ -49,7 +49,7 @@ export function PokemonContainer() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full space-y-6">
       <PokemonFilters
         search={filters.search}
         sort={filters.sort}
@@ -61,7 +61,7 @@ export function PokemonContainer() {
         <PokemonListSkeleton />
       ) : data?.data && data.data.length > 0 ? (
         <>
-          <div className="bg-white rounded-md px-3 py-6 grid grid-cols-[repeat(auto-fill,minmax(104px,max-content))] gap-2 justify-center">
+          <div className="flex-1 bg-white rounded-md px-3 py-6 grid grid-cols-[repeat(auto-fill,minmax(104px,max-content))] gap-2 justify-center">
             {data.data.map((pokemon) => (
               <PokemonCard
                 key={pokemon.number}
@@ -81,7 +81,7 @@ export function PokemonContainer() {
           )}
         </>
       ) : (
-        <div className="text-center text-muted-foreground py-8">
+        <div className="text-center text-gray-200 py-8">
           {filters.search ? (
             <p>No Pokemon found matching &quot;{filters.search}&quot;</p>
           ) : (

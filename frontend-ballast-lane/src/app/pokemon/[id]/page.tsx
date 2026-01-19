@@ -66,7 +66,7 @@ export default async function PokemonDetailPage({ params }: PokemonDetailPagePro
             </CardContent>
           </Card>
 
-          <div className="space-y-6">
+          <div className="flex flex-col space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
