@@ -37,9 +37,10 @@ export default async function PokemonDetailPage({ params }: PokemonDetailPagePro
     const pokemon = response.data;
 
     const imageUrl =
+      pokemon.image ||
       pokemon.sprites?.official_artwork ||
       pokemon.sprites?.front_default ||
-      `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
+      `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.number}.png`;
 
     return (
       <div className="container mx-auto py-10">
@@ -70,7 +71,7 @@ export default async function PokemonDetailPage({ params }: PokemonDetailPagePro
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-3xl capitalize">{pokemon.name}</CardTitle>
-                  <span className="text-xl text-muted-foreground">#{pokemon.id}</span>
+                  <span className="text-xl text-muted-foreground">#{pokemon.number}</span>
                 </div>
               </CardHeader>
               <CardContent>
@@ -99,14 +100,14 @@ export default async function PokemonDetailPage({ params }: PokemonDetailPagePro
                 </div>
 
                 <div className="mt-6">
-                  <p className="text-sm font-medium text-muted-foreground">Abilities</p>
+                  <p className="text-sm font-medium text-muted-foreground">Moves</p>
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {pokemon.abilities.map((ability) => (
+                    {pokemon.moves.slice(0, 6).map((move) => (
                       <span
-                        key={ability}
+                        key={move.name}
                         className="rounded-md bg-muted px-3 py-1 text-sm capitalize"
                       >
-                        {ability.replace("-", " ")}
+                        {move.name.replace("-", " ")}
                       </span>
                     ))}
                   </div>
@@ -120,16 +121,16 @@ export default async function PokemonDetailPage({ params }: PokemonDetailPagePro
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {pokemon.stats.map((stat) => (
-                    <div key={stat.name}>
+                  {Object.entries(pokemon.base_stats).map(([statName, value]) => (
+                    <div key={statName}>
                       <div className="flex justify-between text-sm">
-                        <span className="capitalize">{stat.name.replace("-", " ")}</span>
-                        <span className="font-medium">{stat.base_stat}</span>
+                        <span className="capitalize">{statName.replace("_", " ")}</span>
+                        <span className="font-medium">{value}</span>
                       </div>
                       <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
                         <div
                           className="h-full rounded-full bg-primary transition-all"
-                          style={{ width: `${Math.min(100, (stat.base_stat / 255) * 100)}%` }}
+                          style={{ width: `${Math.min(100, (value / 255) * 100)}%` }}
                         />
                       </div>
                     </div>

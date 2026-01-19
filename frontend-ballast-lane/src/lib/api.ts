@@ -1,4 +1,5 @@
 import { getStoredToken, clearStoredAuth } from "@/providers/auth-provider";
+import type { PokemonListResponse, PokemonDetailResponse } from "@/types/pokemon";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -171,43 +172,5 @@ export interface AuthResponse {
   };
 }
 
-export interface PokemonListItem {
-  number: number;
-  name: string;
-  image: string;
-}
-
-export interface PokemonListResponse {
-  success: boolean;
-  data: PokemonListItem[];
-  meta: {
-    count: number;
-    limit: number;
-    offset: number;
-  };
-}
-
-export interface PokemonDetailResponse {
-  success: boolean;
-  data: PokemonDetail;
-}
-
-export interface Pokemon {
-  id: number;
-  name: string;
-  sprites?: {
-    front_default?: string;
-    official_artwork?: string;
-  };
-  types: string[];
-}
-
-export interface PokemonDetail extends Pokemon {
-  height: number;
-  weight: number;
-  abilities: string[];
-  stats: {
-    name: string;
-    base_stat: number;
-  }[];
-}
+// Re-export Pokemon types from the canonical source
+export type { PokemonListItem, PokemonListResponse, PokemonDetailResponse } from "@/types/pokemon";
