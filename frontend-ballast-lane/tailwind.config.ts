@@ -16,6 +16,29 @@ const config: Config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-poppins)", "system-ui", "sans-serif"],
+        poppins: ["var(--font-poppins)", "system-ui", "sans-serif"],
+      },
+      fontSize: {
+        // Headers - Bold
+        "headline": ["24px", { lineHeight: "32px", fontWeight: "700" }],
+        "subtitle-1": ["14px", { lineHeight: "16px", fontWeight: "700" }],
+        "subtitle-2": ["12px", { lineHeight: "16px", fontWeight: "700" }],
+        "subtitle-3": ["10px", { lineHeight: "16px", fontWeight: "700" }],
+        // Body - Regular
+        "body-1": ["14px", { lineHeight: "16px", fontWeight: "400" }],
+        "body-2": ["12px", { lineHeight: "16px", fontWeight: "400" }],
+        "body-3": ["10px", { lineHeight: "16px", fontWeight: "400" }],
+        "caption": ["8px", { lineHeight: "12px", fontWeight: "400" }],
+      },
+      boxShadow: {
+        // Drop shadows
+        "drop-2": "0px 1px 3px 1px rgba(0, 0, 0, 0.2), 0px 1px 2px 0px rgba(0, 0, 0, 0.2)",
+        "drop-6": "0px 2px 6px 2px rgba(0, 0, 0, 0.2), 0px 1px 2px 0px rgba(0, 0, 0, 0.3)",
+        // Inner shadows
+        "inner-2": "inset 0px 1px 3px 1px rgba(0, 0, 0, 0.2)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -23,7 +46,7 @@ const config: Config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#DC0A2D",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -49,6 +72,35 @@ const config: Config = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        // Pokemon type colors
+        pokemon: {
+          bug: "#A7B723",
+          dark: "#75574C",
+          dragon: "#7037FF",
+          electric: "#F9CF30",
+          fairy: "#E69EAC",
+          fighting: "#C12239",
+          fire: "#F57D31",
+          flying: "#A891EC",
+          ghost: "#70559B",
+          normal: "#AAA67F",
+          grass: "#74CB48",
+          ground: "#DEC16B",
+          ice: "#9AD6DF",
+          poison: "#A43E9E",
+          psychic: "#FB5584",
+          rock: "#B69E31",
+          steel: "#B7B9D0",
+          water: "#6493EB",
+        },
+        // Grayscale palette
+        grayscale: {
+          dark: "#212121",
+          medium: "#666666",
+          light: "#E0E0E0",
+          background: "#EFEFEF",
+          white: "#FFFFFF",
         },
       },
       borderRadius: {
