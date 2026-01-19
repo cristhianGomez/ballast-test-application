@@ -17,6 +17,7 @@ export type IconName =
   | "checkbox"
   | "checkbox-selected"
   | "straighten"
+  | "user"
   | "weight";
 
 interface IconProps {
@@ -138,6 +139,13 @@ export function Icon({ name, size = 16, color = "currentColor", className }: Ico
         fill={color}
       />
     ),
+    user: (
+      <path
+        d="M1.00024 16C2.32566 13.7892 5.23052 12.2762 9.76252 12.2762C14.2945 12.2762 17.1994 13.7892 18.5248 16M13.3625 4.6C13.3625 6.58823 11.7507 8.2 9.76252 8.2C7.77429 8.2 6.16252 6.58823 6.16252 4.6C6.16252 2.61177 7.77429 1 9.76252 1C11.7507 1 13.3625 2.61177 13.3625 4.6Z" strokeWidth="2" strokeLinecap="round"
+        stroke={color}
+      />
+    ),
+
   };
 
   // pokeball has a different viewBox

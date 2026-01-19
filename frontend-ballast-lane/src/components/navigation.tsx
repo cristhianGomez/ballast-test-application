@@ -48,7 +48,7 @@ export function Navigation() {
                   className="flex items-center justify-center w-8 h-8 bg-white rounded-full shadow-inner-2 hover:bg-gray-50 transition-colors"
                   aria-label="User menu"
                 >
-                  <Icon name="pokeball" size={16} color="#DC0A2D" />
+                  <Icon name="user" size={16} className="w-3" color="#DC0A2D" />
                 </button>
               </PopoverTrigger>
               <PopoverContent

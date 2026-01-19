@@ -83,39 +83,41 @@ export function PokemonFilters({
           </button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-[113px] p-1 shadow-drop-2 rounded-xl border-0"
+          className="w-[113px] p-1 pt-0 shadow-drop-2 bg-primary rounded-xl border-0"
           align="end"
           sideOffset={8}
         >
           <div className="space-y-1">
             {/* Title */}
-            <p className="text-primary text-subtitle-3 px-3 pt-2">Sort by:</p>
+            <p className="pl-5 py-4 text-grayscale-white text-subtitle-3">Sort by:</p>
 
             {/* Number Option */}
-            <button
-              onClick={() => handleSortChange("id")}
-              className="flex items-center gap-2 w-full px-3 py-1 hover:bg-gray-50 rounded-lg transition-colors"
-            >
-              <Icon
-                name={sort === "id" ? "radio-selected" : "radio"}
-                size={16}
-                color="#DC0A2D"
-              />
-              <span className="text-body-3 text-grayscale-dark">Number</span>
-            </button>
+            <div className="bg-grayscale-white rounded-lg py-4">
+              <button
+                onClick={() => handleSortChange("id")}
+                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                <Icon
+                  name={sort === "id" ? "radio-selected" : "radio"}
+                  size={16}
+                  color="#DC0A2D"
+                />
+                <span className="text-body-3 text-grayscale-dark">Number</span>
+              </button>
 
-            {/* Name Option */}
-            <button
-              onClick={() => handleSortChange("name")}
-              className="flex items-center gap-2 w-full px-3 py-1 pb-2 hover:bg-gray-50 rounded-lg transition-colors"
-            >
-              <Icon
-                name={sort === "name" ? "radio-selected" : "radio"}
-                size={16}
-                color="#DC0A2D"
-              />
-              <span className="text-body-3 text-grayscale-dark">Name</span>
-            </button>
+              {/* Name Option */}
+              <button
+                onClick={() => handleSortChange("name")}
+                className="flex items-center gap-2 w-full px-3 py-2 pb-2 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                <Icon
+                  name={sort === "name" ? "radio-selected" : "radio"}
+                  size={16}
+                  color="#DC0A2D"
+                />
+                <span className="text-body-3 text-grayscale-dark">Name</span>
+              </button>
+            </div>
           </div>
         </PopoverContent>
       </Popover>
