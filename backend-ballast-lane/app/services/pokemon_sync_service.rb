@@ -68,6 +68,7 @@ class PokemonSyncService
       description: extract_description(species_data),
       color: species_data&.dig("color", "name"),
       base_stats: extract_base_stats(pokemon_data),
+      moves: extract_moves(pokemon_data),
       created_at: Time.current,
       updated_at: Time.current
     }
@@ -106,5 +107,26 @@ class PokemonSyncService
     end
 
     english_entry&.dig("flavor_text")&.gsub(/\s+/, " ")&.strip
+  end
+
+  def extract_moves(data)
+    moves = data["moves"] || []
+    moves.map do |move_data|
+      {
+        name: move_data.dig("move", "name")&.tr("-", " ")&.titleize,
+        learn_method: extract_learn_method(move_data),
+        level_learned_at: extract_level_learned(move_data)
+      }
+    end.compact.uniq { |m| m[:name] }.first(20)
+  end
+
+  def extract_learn_method(move_data)
+    version_details = move_data["version_group_details"]&.last
+    version_details&.dig("move_learn_method", "name")&.tr("-", " ")&.titleize
+  end
+
+  def extract_level_learned(move_data)
+    version_details = move_data["version_group_details"]&.last
+    version_details&.dig("level_learned_at") || 0
   end
 end

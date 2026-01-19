@@ -26,7 +26,19 @@ class PokemonDetailService
       height: pokemon.height,
       description: pokemon.description,
       base_stats: pokemon.base_stats.deep_symbolize_keys,
-      color: pokemon.color
+      color: pokemon.color,
+      moves: pokemon.moves || [],
+      navigation: build_navigation(pokemon.number)
+    }
+  end
+
+  def build_navigation(current_number)
+    prev_pokemon = Pokemon.where("number < ?", current_number).order(number: :desc).first
+    next_pokemon = Pokemon.where("number > ?", current_number).order(number: :asc).first
+
+    {
+      prev: prev_pokemon ? { number: prev_pokemon.number, name: prev_pokemon.name } : nil,
+      next: next_pokemon ? { number: next_pokemon.number, name: next_pokemon.name } : nil
     }
   end
 end

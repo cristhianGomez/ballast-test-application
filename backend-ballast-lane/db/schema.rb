@@ -123,6 +123,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_19_171413) do
     t.jsonb "base_stats", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "moves", default: []
     t.index ["name"], name: "index_pokemons_on_name", unique: true
     t.index ["number"], name: "index_pokemons_on_number", unique: true
     t.index ["types"], name: "index_pokemons_on_types", using: :gin

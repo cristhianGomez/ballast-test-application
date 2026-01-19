@@ -8,6 +8,7 @@ FactoryBot.define do
     height { 10 }
     description { "A sample Pokemon for testing purposes." }
     color { "gray" }
+    moves { ["tackle", "growl"] }
     base_stats do
       {
         hp: 50,
@@ -27,6 +28,7 @@ FactoryBot.define do
       height { 7 }
       description { "A strange seed was planted on its back at birth." }
       color { "green" }
+      moves { ["tackle", "vine whip", "razor leaf"] }
       base_stats do
         {
           hp: 45,
@@ -46,6 +48,7 @@ FactoryBot.define do
       weight { 60 }
       height { 4 }
       description { "When several of these Pokemon gather, their electricity could build and cause lightning storms." }
+      moves { ["thunder shock", "quick attack", "iron tail"] }
       color { "yellow" }
       base_stats do
         {
@@ -67,6 +70,7 @@ FactoryBot.define do
       height { 6 }
       description { "Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail." }
       color { "red" }
+      moves { ["scratch", "ember", "smokescreen"] }
       base_stats do
         {
           hp: 39,
@@ -86,6 +90,7 @@ FactoryBot.define do
       weight { 190 }
       height { 11 }
       description { "When it swings its burning tail, it elevates the temperature to unbearably high levels." }
+      moves { ["scratch", "ember", "flamethrower"] }
       color { "red" }
     end
   end
