@@ -15,7 +15,7 @@ A monorepo containing a Next.js 16 frontend and Rails 7.2 API backend, orchestra
 ## Project Structure
 
 ```
-Ballast Test/
+Ballast-Monorepo/
 ├── docker compose.yml          # Development orchestration
 ├── docker compose.prod.yml     # Production orchestration
 ├── .env.example                # Environment template

@@ -1,0 +1,18 @@
+{
+  "name": "ballast-monorepo",
+  "private": true,
+  "description": "Monorepo containing Rails backend and Next.js frontend",
+  "workspaces": [
+    "frontend-ballast-lane",
+    "backend-ballast-lane"
+  ],
+  "scripts": {
+    "dev": "docker compose up",
+    "dev:build": "docker compose up --build",
+    "down": "docker compose down",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.0.0"
+  }
+}

@@ -1,0 +1,12 @@
+#!/bin/sh
+# Get the commit message
+commit_msg=$(cat "$1")
+
+# Regular expression for: type(scope): message
+pattern="^(feat|fix|chore|refactor|docs|style|test|ci)(\([a-z0-9-]+\))?: .+"
+
+if ! echo "$commit_msg" | grep -Eq "$pattern"; then
+  echo "❌ Error: Your commit message does not follow Conventional Commits."
+  echo "Example: feat(backend): add auth controller"
+  exit 1
+fi
