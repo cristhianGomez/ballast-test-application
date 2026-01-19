@@ -138,6 +138,7 @@ backend-ballast-lane/
 │   ├── database.yml
 │   ├── routes.rb
 │   └── initializers/
+│       ├── 0_devise_setup.rb # Early Devise ORM loading (fixes devise-jwt issue)
 │       ├── cors.rb           # CORS configuration
 │       └── devise.rb         # Devise + JWT config
 ├── db/
@@ -202,3 +203,14 @@ rails db:seed
 3. **API Versioning**: All endpoints under `/api/v1/`
 4. **JSON:API Serializers**: Consistent response format
 5. **JWT Denylist**: Token revocation support
+
+## Troubleshooting
+
+### "undefined method `devise' for User:Class" Error
+
+This error occurs when `devise-jwt` triggers route reloading before Devise's ORM integration is complete. The fix is the `config/initializers/0_devise_setup.rb` initializer which loads Devise ORM early.
+
+If you encounter this error after modifying initializers:
+1. Ensure `0_devise_setup.rb` exists and loads before other initializers (the `0_` prefix ensures alphabetical ordering)
+2. Clear the bootsnap cache: `rm -rf tmp/cache`
+3. Rebuild Docker containers: `docker compose build --no-cache backend`

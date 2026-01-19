@@ -17,10 +17,10 @@ WORKDIR /app
 # Install bundler
 RUN gem install bundler -v 2.5.0
 
-# Copy only Gemfile and regenerate lock file for correct platform
-COPY Gemfile ./
+# Copy Gemfile and Gemfile.lock
+COPY Gemfile Gemfile.lock ./
 RUN bundle config set --local without 'production' && \
-    bundle lock --add-platform x86_64-linux && \
+    bundle lock --add-platform x86_64-linux x86_64-linux-gnu && \
     bundle install --jobs 4 --retry 3
 
 # Copy entrypoint script

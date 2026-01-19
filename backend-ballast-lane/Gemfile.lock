@@ -317,6 +317,7 @@ GEM
     zeitwerk (2.7.4)
 
 PLATFORMS
+  x86_64-linux
   x86_64-linux-gnu
 
 DEPENDENCIES
