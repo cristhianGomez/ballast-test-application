@@ -36,7 +36,7 @@ export function Navigation() {
       <div className="container bg-primary mx-auto flex h-16 items-center justify-between px-4">
         <div className="m-3 mt-4 flex items-center gap-4">
           <Icon name="pokeball" size={24} color="white" />
-          <h1 className="text-headline font-bold text-grayscale-white">Pokedex</h1>
+          <h1 className="text-headline font-bold text-grayscale-white">Pokédex</h1>
         </div>
         <div className="flex items-center gap-4">
           {isLoading ? (

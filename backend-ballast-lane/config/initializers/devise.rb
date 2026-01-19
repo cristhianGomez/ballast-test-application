@@ -20,7 +20,10 @@ Devise.setup do |config|
 
   # JWT Configuration
   config.jwt do |jwt|
-    jwt.secret = ENV.fetch("DEVISE_JWT_SECRET_KEY", "your-secret-key-here")
+    jwt.secret = ENV.fetch("DEVISE_JWT_SECRET_KEY") {
+      raise "DEVISE_JWT_SECRET_KEY environment variable is required" unless Rails.env.test?
+      "test-secret-key-for-testing-only"
+    }
     jwt.dispatch_requests = [
       ["POST", %r{^/api/v1/auth/sign_in$}]
     ]

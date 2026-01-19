@@ -1,13 +1,16 @@
 module Api
   module V1
     class PokemonController < BaseController
+      MAX_LIMIT = 100
+      DEFAULT_LIMIT = 20
+
       def index
         result = pokemon_service.list(
           search: params[:search],
           sort: params[:sort] || "number",
           order: params[:order] || "asc",
-          limit: (params[:limit] || 20).to_i,
-          offset: (params[:offset] || 0).to_i
+          limit: validated_limit,
+          offset: validated_offset
         )
 
         if result
@@ -35,6 +38,16 @@ module Api
 
       def pokemon_detail_service
         @pokemon_detail_service ||= PokemonDetailService.new
+      end
+
+      def validated_limit
+        limit = params[:limit].to_i
+        return DEFAULT_LIMIT if limit <= 0
+        [limit, MAX_LIMIT].min
+      end
+
+      def validated_offset
+        [params[:offset].to_i, 0].max
       end
     end
   end

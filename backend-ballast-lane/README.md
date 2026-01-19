@@ -129,8 +129,12 @@ backend-ballast-lane/
 │   ├── models/
 │   │   ├── user.rb           # Devise user model
 │   │   └── jwt_denylist.rb   # JWT revocation
+│   ├── jobs/
+│   │   └── pokemon_sync_job.rb # Pokemon data sync from PokeAPI
 │   ├── services/
-│   │   └── pokemon_service.rb # PokeAPI integration
+│   │   ├── pokemon_service.rb      # Pokemon listing service
+│   │   ├── pokemon_detail_service.rb # Pokemon detail service
+│   │   └── pokemon_sync_service.rb # PokeAPI sync service
 │   └── serializers/
 │       ├── user_serializer.rb
 │       └── pokemon_serializer.rb
@@ -140,7 +144,9 @@ backend-ballast-lane/
 │   └── initializers/
 │       ├── 0_devise_setup.rb # Early Devise ORM loading (fixes devise-jwt issue)
 │       ├── cors.rb           # CORS configuration
-│       └── devise.rb         # Devise + JWT config
+│       ├── devise.rb         # Devise + JWT config
+│       ├── good_job.rb       # Background job configuration
+│       └── rack_attack.rb    # Rate limiting configuration
 ├── db/
 │   └── migrate/
 └── spec/                     # RSpec tests
@@ -185,6 +191,38 @@ docker compose exec backend rails db:reset
 # Without Docker
 rails db:migrate
 rails db:seed
+```
+
+### Background Jobs (GoodJob)
+
+The application uses [GoodJob](https://github.com/bensheldon/good_job) for background job processing with PostgreSQL (no Redis required).
+
+**Pokemon Sync Job** - Syncs Pokemon data from PokeAPI to the local database.
+
+```bash
+# Run Pokemon sync manually (syncs first 151 Pokemon by default)
+docker compose exec backend rails runner "PokemonSyncJob.perform_now"
+
+# Sync a specific number of Pokemon (e.g., all 1000+)
+docker compose exec backend rails runner "PokemonSyncJob.perform_now(limit: 1000)"
+
+# Queue the job to run in background
+docker compose exec backend rails runner "PokemonSyncJob.perform_later"
+
+# Check job status via Rails console
+docker compose exec backend rails c
+# Then in console:
+# GoodJob::Job.all                    # List all jobs
+# GoodJob::Job.where(finished_at: nil) # Pending jobs
+# GoodJob::Job.last                   # Most recent job
+```
+
+**Cron Schedule**: The Pokemon sync job runs automatically every 6 hours (`0 */6 * * *`).
+
+**Without Docker:**
+```bash
+rails runner "PokemonSyncJob.perform_now"
+rails runner "PokemonSyncJob.perform_now(limit: 1000)"
 ```
 
 ## Environment Variables
