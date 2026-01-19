@@ -6,6 +6,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 
 require "rspec/rails"
 require "shoulda/matchers"
+require "database_cleaner/active_record"
 
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
@@ -17,7 +18,7 @@ end
 
 RSpec.configure do |config|
   config.fixture_path = Rails.root.join("spec/fixtures")
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
 

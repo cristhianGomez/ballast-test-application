@@ -4,82 +4,87 @@ RSpec.describe PokemonService do
   subject(:service) { described_class.new }
 
   describe "#list" do
-    context "with VCR cassettes" do
-      it "returns a list of pokemon" do
-        VCR.use_cassette("pokemon_list") do
-          result = service.list(limit: 5, offset: 0)
-
-          expect(result).to be_a(Hash)
-          expect(result[:pokemon]).to be_an(Array)
-          expect(result[:meta][:count]).to be_a(Integer)
-        end
-      end
+    before do
+      create(:pokemon, :bulbasaur)
+      create(:pokemon, name: "ivysaur", number: 2, types: ["grass", "poison"])
+      create(:pokemon, name: "venusaur", number: 3, types: ["grass", "poison"])
+      create(:pokemon, :charmander)
+      create(:pokemon, :charmeleon)
     end
 
-    context "with mocked responses" do
-      before do
-        allow(Rails.cache).to receive(:fetch).and_call_original
-        allow(Rails.cache).to receive(:fetch).with("all_pokemon_list", anything).and_return([
-          { name: "bulbasaur", number: 1, url: "https://pokeapi.co/api/v2/pokemon/1/" },
-          { name: "ivysaur", number: 2, url: "https://pokeapi.co/api/v2/pokemon/2/" },
-          { name: "venusaur", number: 3, url: "https://pokeapi.co/api/v2/pokemon/3/" },
-          { name: "charmander", number: 4, url: "https://pokeapi.co/api/v2/pokemon/4/" },
-          { name: "charmeleon", number: 5, url: "https://pokeapi.co/api/v2/pokemon/5/" }
-        ])
-        allow(Rails.cache).to receive(:fetch).with(/pokemon_image_/, anything).and_return("https://example.com/sprite.png")
-      end
+    it "returns a list of pokemon" do
+      result = service.list(limit: 5, offset: 0)
 
-      it "filters by name search" do
-        result = service.list(search: "char")
+      expect(result).to be_a(Hash)
+      expect(result[:pokemon]).to be_an(Array)
+      expect(result[:meta][:count]).to eq(5)
+    end
 
-        expect(result[:pokemon].map { |p| p[:name] }).to eq(["charmander", "charmeleon"])
-        expect(result[:meta][:count]).to eq(2)
-      end
+    it "filters by name search" do
+      result = service.list(search: "char")
 
-      it "filters by number search" do
-        result = service.list(search: "1")
+      expect(result[:pokemon].map { |p| p[:name] }).to contain_exactly("charmander", "charmeleon")
+      expect(result[:meta][:count]).to eq(2)
+    end
 
-        expect(result[:pokemon].map { |p| p[:number] }).to eq([1])
-      end
+    it "filters by number search" do
+      result = service.list(search: "1")
 
-      it "sorts by name ascending" do
-        result = service.list(sort: "name", order: "asc")
+      expect(result[:pokemon].map { |p| p[:number] }).to eq([1])
+    end
 
-        names = result[:pokemon].map { |p| p[:name] }
-        expect(names).to eq(names.sort)
-      end
+    it "filters by exact number with # prefix" do
+      result = service.list(search: "#004")
 
-      it "sorts by name descending" do
-        result = service.list(sort: "name", order: "desc")
+      expect(result[:pokemon].length).to eq(1)
+      expect(result[:pokemon].first[:name]).to eq("charmander")
+      expect(result[:pokemon].first[:number]).to eq(4)
+    end
 
-        names = result[:pokemon].map { |p| p[:name] }
-        expect(names).to eq(names.sort.reverse)
-      end
+    it "filters by exact number with # prefix without leading zeros" do
+      result = service.list(search: "#2")
 
-      it "sorts by number ascending by default" do
-        result = service.list
+      expect(result[:pokemon].length).to eq(1)
+      expect(result[:pokemon].first[:name]).to eq("ivysaur")
+    end
 
-        numbers = result[:pokemon].map { |p| p[:number] }
-        expect(numbers).to eq(numbers.sort)
-      end
+    it "sorts by name ascending" do
+      result = service.list(sort: "name", order: "asc")
 
-      it "paginates results" do
-        result = service.list(limit: 2, offset: 1)
+      names = result[:pokemon].map { |p| p[:name] }
+      expect(names).to eq(names.sort)
+    end
 
-        expect(result[:pokemon].length).to eq(2)
-        expect(result[:pokemon].first[:number]).to eq(2)
-        expect(result[:meta][:limit]).to eq(2)
-        expect(result[:meta][:offset]).to eq(1)
-      end
+    it "sorts by name descending" do
+      result = service.list(sort: "name", order: "desc")
 
-      it "returns pokemon with name, number, and image" do
-        result = service.list(limit: 1)
+      names = result[:pokemon].map { |p| p[:name] }
+      expect(names).to eq(names.sort.reverse)
+    end
 
-        pokemon = result[:pokemon].first
-        expect(pokemon).to have_key(:name)
-        expect(pokemon).to have_key(:number)
-        expect(pokemon).to have_key(:image)
-      end
+    it "sorts by number ascending by default" do
+      result = service.list
+
+      numbers = result[:pokemon].map { |p| p[:number] }
+      expect(numbers).to eq(numbers.sort)
+    end
+
+    it "paginates results" do
+      result = service.list(limit: 2, offset: 1)
+
+      expect(result[:pokemon].length).to eq(2)
+      expect(result[:pokemon].first[:number]).to eq(2)
+      expect(result[:meta][:limit]).to eq(2)
+      expect(result[:meta][:offset]).to eq(1)
+    end
+
+    it "returns pokemon with name, number, and image" do
+      result = service.list(limit: 1)
+
+      pokemon = result[:pokemon].first
+      expect(pokemon).to have_key(:name)
+      expect(pokemon).to have_key(:number)
+      expect(pokemon).to have_key(:image)
     end
   end
 end

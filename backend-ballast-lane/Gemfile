@@ -24,6 +24,9 @@ gem "devise-jwt", "~> 0.12"
 # HTTP client for external APIs
 gem "faraday", "~> 2.9"
 
+# Background jobs (PostgreSQL-based, no Redis required)
+gem "good_job", "~> 4.0"
+
 # Performance
 gem "bootsnap", require: false
 

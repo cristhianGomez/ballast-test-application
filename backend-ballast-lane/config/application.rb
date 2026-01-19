@@ -24,6 +24,9 @@ module BackendBallastLane
     # Time zone
     config.time_zone = "UTC"
 
+    # Background jobs
+    config.active_job.queue_adapter = :good_job
+
     # Generators
     config.generators do |g|
       g.test_framework :rspec
