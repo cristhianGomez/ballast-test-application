@@ -1,26 +1,24 @@
 "use client";
 
+import { ArrowLeft, X } from "lucide-react";
 import { useIsDesktop } from "@/hooks/use-media-query";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerDescription,
 } from "@/components/ui/drawer";
+import { typeColors } from "@/types/pokemon";
+import { Icon } from "./icon";
 
 interface ResponsiveDetailProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
   description?: string;
+  color:  keyof typeof typeColors;
   children: React.ReactNode;
 }
 
@@ -30,32 +28,30 @@ export function ResponsiveDetail({
   title,
   description,
   children,
+  color,
 }: ResponsiveDetailProps) {
   const isDesktop = useIsDesktop();
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            {description && <DialogDescription>{description}</DialogDescription>}
-          </DialogHeader>
-          {children}
-        </DialogContent>
-      </Dialog>
+      <Drawer open={open} onOpenChange={onOpenChange} direction="right">
+        <DrawerContent
+          showHandle={false}
+          className="fixed inset-y-0 right-0 left-auto h-full w-[400px] rounded-none rounded-l-lg"
+        >
+          <div className="overflow-y-auto px-4 pb-4 flex-1">{children}</div>
+        </DrawerContent>
+      </Drawer>
     );
   }
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[85vh]">
-        <DrawerHeader className="text-left">
-          <DrawerTitle>{title}</DrawerTitle>
-          {description && <DrawerDescription>{description}</DrawerDescription>}
-        </DrawerHeader>
-        <div className="overflow-y-auto px-4 pb-4">{children}</div>
-      </DrawerContent>
-    </Drawer>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className={`${typeColors[color]} h-[100dvh] max-h-[100dvh] w-full max-w-full rounded-none p-0 sm:rounded-none`}>
+        <div className="flex h-full relative flex-col overflow-hidden">
+          <div className={`flex flex-1 overflow-y-auto p-1 ${typeColors[color] || "bg-gray-400"}`}>{children}</div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

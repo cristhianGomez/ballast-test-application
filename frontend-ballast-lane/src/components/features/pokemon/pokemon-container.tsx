@@ -33,6 +33,10 @@ export function PokemonContainer() {
     }
   };
 
+  const handleNavigate = (name: string) => {
+    setSelectedPokemon(name);
+  };
+
   if (isError) {
     return (
       <div className="rounded-lg border border-destructive bg-destructive/10 p-4 text-center">
@@ -91,10 +95,13 @@ export function PokemonContainer() {
         onOpenChange={handleDetailClose}
         title={selectedPokemon ? `${selectedPokemon}` : "Pokemon Detail"}
         description="Pokemon details and stats"
+        color={detailData?.data.types.find(type => type) || "water"}
       >
         <PokemonDetailView
+          onClose={() => setSelectedPokemon(null)}
           pokemon={detailData?.data ?? null}
           isLoading={isDetailLoading}
+          onNavigate={handleNavigate}
         />
       </ResponsiveDetail>
     </div>
