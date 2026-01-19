@@ -1,8 +1,10 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { pokemonApi } from "@/lib/api";
+import { formatPokemonName, getPokemonDescription, siteConfig } from "@/lib/seo";
 
 const typeColors: Record<string, string> = {
   normal: "bg-gray-400",
@@ -27,6 +29,49 @@ const typeColors: Record<string, string> = {
 
 interface PokemonDetailPageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: PokemonDetailPageProps): Promise<Metadata> {
+  const { id } = await params;
+
+  try {
+    const response = await pokemonApi.get(id);
+    const pokemon = response.data;
+    const formattedName = formatPokemonName(pokemon.name);
+    const description = getPokemonDescription(pokemon.name, pokemon.types);
+    const imageUrl =
+      pokemon.image ||
+      pokemon.sprites?.official_artwork ||
+      `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.number}.png`;
+
+    return {
+      title: `${formattedName} #${pokemon.number}`,
+      description,
+      openGraph: {
+        title: `${formattedName} #${pokemon.number} | ${siteConfig.name}`,
+        description,
+        images: [
+          {
+            url: imageUrl,
+            width: 475,
+            height: 475,
+            alt: formattedName,
+          },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: `${formattedName} #${pokemon.number}`,
+        description,
+        images: [imageUrl],
+      },
+    };
+  } catch {
+    return {
+      title: "Pokemon Not Found",
+      description: "The requested Pokemon could not be found.",
+    };
+  }
 }
 
 export default async function PokemonDetailPage({ params }: PokemonDetailPageProps) {
