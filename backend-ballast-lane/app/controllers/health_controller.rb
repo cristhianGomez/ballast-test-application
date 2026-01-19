@@ -1,10 +1,12 @@
 class HealthController < ApplicationController
   def show
-    render json: {
-      status: "ok",
-      timestamp: Time.current.iso8601,
-      database: database_connected?
-    }
+    render_success(
+      data: {
+        status: "ok",
+        timestamp: Time.current.iso8601,
+        database: database_connected?
+      }
+    )
   end
 
   private

@@ -1,5 +1,10 @@
+require_relative "../../lib/custom_failure_app"
+
 Devise.setup do |config|
   config.mailer_sender = "noreply@ballastlane.com"
+  config.warden do |manager|
+    manager.failure_app = CustomFailureApp
+  end
   config.case_insensitive_keys = [:email]
   config.strip_whitespace_keys = [:email]
   config.skip_session_storage = [:http_auth]

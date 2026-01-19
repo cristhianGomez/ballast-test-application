@@ -5,6 +5,9 @@ Rails.application.configure do
   config.eager_load = false
   config.consider_all_requests_local = true
 
+  # Allow localhost and Docker network hosts
+  config.hosts.clear
+
   # Caching
   if Rails.root.join("tmp/caching-dev.txt").exist?
     config.action_controller.perform_caching = true

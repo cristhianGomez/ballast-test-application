@@ -1,39 +1,29 @@
 module Api
   module V1
     class PokemonController < BaseController
-      skip_before_action :authenticate_user!
-
       def index
-        limit = params.fetch(:limit, 20).to_i
-        offset = params.fetch(:offset, 0).to_i
-
-        result = pokemon_service.list(limit: limit, offset: offset)
+        result = pokemon_service.list(
+          search: params[:search],
+          sort: params[:sort] || "number",
+          order: params[:order] || "asc",
+          limit: (params[:limit] || 20).to_i,
+          offset: (params[:offset] || 0).to_i
+        )
 
         if result
-          render json: {
-            success: true,
-            data: result[:pokemon],
-            meta: {
-              count: result[:count],
-              limit: limit,
-              offset: offset
-            }
-          }
+          render_success(data: result[:pokemon], meta: result[:meta])
         else
-          render_error("Failed to fetch Pokemon list", status: :service_unavailable)
+          render_service_unavailable("Failed to fetch Pokemon list")
         end
       end
 
       def show
-        pokemon = pokemon_service.find(params[:id])
+        pokemon = pokemon_detail_service.find(params[:id])
 
         if pokemon
-          render json: {
-            success: true,
-            data: pokemon
-          }
+          render_success(data: pokemon)
         else
-          render_error("Pokemon not found", status: :not_found)
+          render_not_found("Pokemon")
         end
       end
 
@@ -41,6 +31,10 @@ module Api
 
       def pokemon_service
         @pokemon_service ||= PokemonService.new
+      end
+
+      def pokemon_detail_service
+        @pokemon_detail_service ||= PokemonDetailService.new
       end
     end
   end

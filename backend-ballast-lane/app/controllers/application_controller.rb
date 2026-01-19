@@ -1,13 +1,18 @@
 class ApplicationController < ActionController::API
+  include ApiResponse
+
   respond_to :json
+
+  rescue_from JWT::DecodeError, with: :handle_jwt_error
+  rescue_from JWT::ExpiredSignature, with: :handle_jwt_expired
 
   private
 
-  def render_error(message, status: :unprocessable_entity)
-    render json: { error: message }, status: status
+  def handle_jwt_error
+    render_unauthorized("Invalid token")
   end
 
-  def render_success(data, status: :ok)
-    render json: data, status: status
+  def handle_jwt_expired
+    render_unauthorized("Token has expired")
   end
 end

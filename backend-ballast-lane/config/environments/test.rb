@@ -2,6 +2,9 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   config.enable_reloading = false
+
+  # Allow any host in tests
+  config.hosts.clear
   config.eager_load = ENV["CI"].present?
   config.consider_all_requests_local = true
 
