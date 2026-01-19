@@ -57,20 +57,21 @@ export function PokemonPagination({
   }
 
   return (
-    <div className="flex items-center justify-center gap-1">
+    <div className="flex items-center justify-center gap-0.5 sm:gap-1 mx-2 sm:mx-4">
       <Button
         variant="outline"
-        size="sm"
+        size="icon"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={!hasPreviousPage}
+        className="h-7 w-7 sm:h-8 sm:w-8"
       >
-        <ChevronLeft className="h-4 w-4" />
+        <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
         <span className="sr-only">Previous</span>
       </Button>
 
       {getPageNumbers().map((page, index) =>
         page === "..." ? (
-          <span key={`ellipsis-${index}`} className="px-2 text-muted-foreground">
+          <span key={`ellipsis-${index}`} className="px-1 sm:px-2 text-muted-foreground text-xs sm:text-sm">
             ...
           </span>
         ) : (
@@ -79,7 +80,7 @@ export function PokemonPagination({
             variant={currentPage === page ? "default" : "outline"}
             size="sm"
             onClick={() => onPageChange(page)}
-            className="min-w-[36px]"
+            className="h-7 w-7 sm:h-8 sm:min-w-[36px] text-xs sm:text-sm p-0 sm:px-3"
           >
             {page}
           </Button>
@@ -88,11 +89,12 @@ export function PokemonPagination({
 
       <Button
         variant="outline"
-        size="sm"
+        size="icon"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={!hasNextPage}
+        className="h-7 w-7 sm:h-8 sm:w-8"
       >
-        <ChevronRight className="h-4 w-4" />
+        <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
         <span className="sr-only">Next</span>
       </Button>
     </div>

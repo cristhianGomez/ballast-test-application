@@ -61,7 +61,7 @@ export function PokemonContainer() {
         <PokemonListSkeleton />
       ) : data?.data && data.data.length > 0 ? (
         <>
-          <div className="flex-1 bg-white rounded-md px-3 py-6 grid grid-cols-[repeat(auto-fill,minmax(104px,max-content))] gap-2 justify-center">
+          <div className="flex-1 bg-white rounded-md sm:px-3 sm:py-6 grid grid-cols-[repeat(auto-fill,minmax(104px,max-content))] sm:grid-cols-[repeat(auto-fill,minmax(148px,max-content))] gap-2 justify-center">
             {data.data.map((pokemon) => (
               <PokemonCard
                 key={pokemon.number}

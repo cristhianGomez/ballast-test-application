@@ -37,13 +37,13 @@ export function PokemonDetailView({ pokemon, isLoading, onNavigate, onClose }: P
   const idFormatted = `#${String(pokemon.number).padStart(3, "0")}`;
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex  items-center mb-auto text-grayscale-white p-5">
-        <ArrowLeftIcon className="h-8 w-8 pr-2" onClick={onClose} />
+    <div className="flex flex-col h-full w-full sm:w-10/12 md:justify-around">
+      <div className="flex  items-center mb-auto md:mb-0 text-grayscale-white p-5">
+        <button onClick={onClose} name="back"><ArrowLeftIcon className="h-8 w-8 pr-2"  /></button>
         <h1 className="first-letter:uppercase text-xl font-bold">{pokemon.name}</h1>
         <h4 className="ml-auto text-subtitle-2 font-bold">{idFormatted}</h4>
       </div>
-      <div className="mt-auto flex flex-col items-start gap-4 relative self-stretch w-full">
+      <div className="mt-auto md:mt-0 flex flex-col items-start gap-4 relative self-stretch w-full">
         <div className="z-100 absolute right-3 top-[-48%]">
           <Icon size={202} name="pokeball" color="#ffffff30"></Icon>
         </div>
