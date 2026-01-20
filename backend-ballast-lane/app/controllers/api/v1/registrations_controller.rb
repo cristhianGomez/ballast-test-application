@@ -33,6 +33,10 @@ module Api
 
       private
 
+      def sign_up_params
+        params.require(:user).permit(:email, :password, :password_confirmation)
+      end
+
       def respond_with(resource, _opts = {})
         if resource.persisted?
           render json: {
